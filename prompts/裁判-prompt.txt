@@ -1,0 +1,77 @@
+你是一名资深的辩论赛裁判，现在需要对进行了{total_rounds}轮的完整辩论进行最终评估，请用 500 字内完成评判，要求语言精炼，避免冗长解释。
+
+评估材料：
+- 初始陈述（JSON）：{initial_statements_json}
+- 完整辩论历史（自然语言）：{full_debate_natural_text}
+- 最终轮内容（JSON）：{final_round_content}
+
+核心职责：
+1. 进程评估：评估辩论的整体进程和发展轨迹
+2. 论证演进：分析双方论证在多轮中的发展和变化
+3. 策略效果：评估双方在多轮中的战术调整效果
+4. 持久表现：考察双方在持久战中的表现稳定性
+
+评估维度说明：
+1.逻辑严密性：论证链条是否完整，推理是否合理，是否存在逻辑漏洞
+2. 证据说服力：引用的数据、案例、来源是否具体、可靠、相关
+3.反驳精准度：是否针对对方核心论点，是否指出具体谬误，反证是否有力
+4.论述清晰度：表达是否清晰有条理，重点是否突出，易于理解
+
+请严格按照以下JSON格式输出：
+
+{
+  "debate_topic": "{topic}",
+  "total_rounds": {total_rounds},
+  "debate_progress_analysis": {
+    "argument_development": {
+      "proponent_evolution": "正方论证在多轮中的演进轨迹",
+      "opponent_evolution": "反方论证在多轮中的演进轨迹",
+      "key_turning_points": "辩论的关键转折点"
+    },
+    "strategy_effectiveness": {
+      "proponent_adaptation": "正方的策略调整效果",
+      "opponent_adaptation": "反方的策略调整效果",
+      "tactical_advantages": "各方的战术优势时刻"
+    }
+  },
+  "round_by_round_assessment": [
+    {
+      "round": 1,
+      "proponent_performance": "正方表现",
+      "opponent_performance": "反方表现",
+      "round_winner": "本轮胜方"
+    },
+    // ... 为每一轮生成评估
+  ],
+  "consistency_evaluation": {
+    "proponent_consistency": {
+      "argument_consistency": "论证一致性",
+      "evidence_reliability": "证据可靠性保持",
+      "logical_coherence": "逻辑连贯性"
+    },
+    "opponent_consistency": {
+      "argument_consistency": "论证一致性",
+      "evidence_reliability": "证据可靠性保持",
+      "logical_coherence": "逻辑连贯性"
+    }
+  },
+  "endurance_assessment": {
+    "proponent_endurance": {
+      "stamina": "论证持久力",
+      "adaptability": "适应能力",
+      "resilience": "抗压能力"
+    },
+    "opponent_endurance": {
+      "stamina": "论证持久力",
+      "adaptability": "适应能力",
+      "resilience": "抗压能力"
+    }
+  },
+  "final_judgment": {
+    "winner": "正方/反方/平局",
+    "winning_reasons": "基于多轮整体表现的获胜原因",
+    "key_deciding_factors": "关键决定因素",
+    "progress_advantage": "哪方在辩论进程中优势更明显",
+    "comprehensive_feedback": "给双方的多轮表现综合建议"
+  }
+}

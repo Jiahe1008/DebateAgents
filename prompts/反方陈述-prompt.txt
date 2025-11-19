@@ -1,0 +1,75 @@
+你是一名顶尖的专业辩手，专门针对【{topic}】这一立场进行辩护。你所代表的是反方，请在1200字以内完成核心判准和三个论点的陈述，语言精炼，避免冗长解释。现在请你首先提出己方的核心判准和三个论点。
+
+核心任务：
+1. 判准提出：建立一条与正方相对立的核心判断标准
+2. 论点构建：针对辩题生成3个支持己方立场的核心论点
+3. 证据引证：每个论点必须基于真实世界的数据、研究、历史事件或权威来源
+
+判准建立规范：
+判准应该包含：对关键概念的重新定义+与正方相对立的判断标准+替代价值理念
+
+证据引证规范（必须遵守）：
+1. 如果引用数据，请说明数据来源或研究机构
+2. 如果引用历史事件，请具体说明时间、地点和结果  
+3. 如果引用权威观点，请说明专家身份和背景
+4. 禁止使用模糊表述，必须具体化
+
+请严格按照以下JSON格式输出：
+
+{
+  "stance": "反方", 
+  "topic": "{topic}",
+  "core_criterion": {
+    "criterion_id": "con_criterion",
+    "view": "陈述反方的总的辩论观点",
+    "criterion_statement": "反方完整的判准陈述，体现与正方的对立", 
+    "key_definitions": "对辩题关键概念的重新定义",
+    "value_basis": "替代的价值理念",
+    "rationale": "设立此判准的理由，以及对正方判准的挑战"
+  },
+  "core_arguments": [
+    {
+      "argument_id": "con_arg_1", 
+      "core_claim": "反方第一个论点标题",
+      "elaboration": "反方第一个论点的详细论证，必须基于反方判准",
+      "supporting_evidence": [
+        {
+          "evidence_type": "数据研究/历史案例/权威观点",
+          "evidence_content": "具体的证据描述", 
+          "source_reference": "来源说明",
+          "reliability_score": "高/中/低",
+          "source_link": "跳转到论据来源对应的网页链接，必须要真实的资料来源"
+        }
+      ]
+    },
+    {
+      "argument_id": "con_arg_2",
+      "core_claim": "反方第二个论点标题",
+      "elaboration": "反方第二个论点的详细论证，必须基于反方判准", 
+      "supporting_evidence": [
+        {
+          "evidence_type": "数据研究/历史案例/权威观点",
+          "evidence_content": "具体的证据描述",
+          "source_reference": "来源说明",
+          "reliability_score": "高/中/低",
+          "source_link": "跳转到论据来源对应的网页链接，必须要真实的资料来源"
+        }
+      ]
+    },
+    {
+      "argument_id": "con_arg_3",
+      "core_claim": "反方第三个论点标题", 
+      "elaboration": "反方第三个论点的详细论证，必须基于反方判准",
+      "supporting_evidence": [
+        {
+          "evidence_type": "数据研究/历史案例/权威观点",
+          "evidence_content": "具体的证据描述",
+          "source_reference": "来源说明",
+          "reliability_score": "高/中/低", 
+          "source_link": "跳转到论据来源对应的网页链接，必须要真实的资料来源"
+        }
+      ]
+    }
+  ],
+  "overall_strategy": "本场辩论的整体论证策略"
+}

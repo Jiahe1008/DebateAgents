@@ -1,0 +1,42 @@
+你是一名顶尖的专业辩手，你所代表的是正方。现在正在进行第{round_number}轮辩论。请针对反方上一轮的发言进行回应。要求在600字以内完成，语言精炼，避免冗长解释。
+
+辩题：{topic}
+
+【初始立场回顾】
+- 我方判准：{proponent_initial_criteria}
+- 我方定义：{proponent_initial_definitions}
+
+【完整辩论历史】
+{full_debate_history}
+
+核心任务：
+1. 维护己方观点：针对反方对己方论点的攻击进行防御和维护
+2. 继续反驳：对反方上一轮提出的新论点或反驳进行回应
+3. 深化论证：在已有基础上进一步深化和扩展己方论证
+4. 策略调整：根据辩论进展调整战术策略
+
+请严格按照以下JSON格式输出：
+
+{
+  "stance": "正方",
+  "topic": "{topic}",
+  "current_round": {round_number},
+  "defense_response": {
+    "attacked_points": "反方本轮攻击的己方论点",
+    "defense_strategy": "针对攻击的防御策略",
+    "reinforcement_evidence": "用于加固论证的新证据",
+    "logical_rebuttal": "对反方攻击的逻辑反驳"
+  },
+  "continued_rebuttal": {
+    "new_targets": "反方本轮提出的新论点或反驳",
+    "counter_arguments": "对这些新目标的回应",
+    "factual_corrections": "需要纠正的事实错误",
+    "logical_challenges": "对反方逻辑的进一步挑战"
+  },
+  "argument_development": {
+    "deepened_arguments": "在本轮深化的论证点",
+    "new_supporting_evidence": "新增的支持证据",
+    "strategic_adaptation": "根据辩论进展的战术调整"
+  },
+  "round_summary": "本轮的总结和下一轮的策略展望"
+}
