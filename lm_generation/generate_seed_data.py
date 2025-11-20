@@ -10,7 +10,7 @@ def main():
     generator = SeedDataGenerator()
 
     # 生成种子数据（更改 num_samples 可调整数量）
-    seed_data = generator.generate_seed_dataset(num_samples=61, save_path=os.path.join('data', 'seed_debates.jsonl'))
+    seed_data = generator.generate_seed_dataset(num_samples=3, save_path=os.path.join('data', 'seed_debates.jsonl'))
 
     print(f"成功生成 {len(seed_data)} 个种子辩论样本")
 

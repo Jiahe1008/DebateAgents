@@ -28,8 +28,7 @@ except ImportError:
 
 # 可选：有效性验证（需配置 DashScope API）
 USE_VALIDATION = True  # 设为 True 并配置 API 后启用
-if USE_VALIDATION:
-    from lm_generation.dashscope_api import call_api
+from dashscope_api import call_api
 
 
 def extract_topic_from_instruction(instr: str) -> str:
@@ -98,6 +97,8 @@ def check_diversity(samples):
                 topics.append(topic)
                 topic_to_samples[topic] = s
 
+    unique_topics = list(set(topics))
+
     if not topics:
         return results
 
@@ -105,9 +106,9 @@ def check_diversity(samples):
     exact_dups = len(topics) - len(set(topics))
     results["topic_duplication"] = exact_dups
 
-    # 语义相似度（如果可用）
+    # 语义相似度
     if HAS_EMBEDDING and len(topics) > 1:
-        unique_topics = list(set(topics))
+        print("  - 执行语义多样性检测...（输出高相似度辩题对）")
         model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
         embeddings = model.encode(unique_topics, show_progress_bar=False)
         sim_matrix = cosine_similarity(embeddings)
@@ -118,6 +119,9 @@ def check_diversity(samples):
                 if sim_matrix[i][j] > 0.85:
                     high_sim_pairs.append((unique_topics[i], unique_topics[j], sim_matrix[i][j]))
         results["high_similarity_topics"] = high_sim_pairs
+        if len(unique_topics) > 1:
+            max_sim = np.max(sim_matrix - np.eye(len(sim_matrix)))  # 排除自身相似度1.0
+            print(f"    最大辩题间相似度: {max_sim:.3f}")
 
     return results
 
@@ -220,7 +224,7 @@ def main(file_path: str):
 
     print("\n" + "=" * 50)
     print("✅ 评估完成！")
-
+    
 
 if __name__ == "__main__":
     import argparse
