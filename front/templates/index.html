@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 辩论场 2.0</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- 引入一个图标库，增加科技感 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fa-solid fa-robot"></i> AI 辩论场</h1>
+            <p>输入一个辩题，看看ai之间怎么辩论</p>
+        </header>
+
+        <main>
+            <form id="debate-form">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-feather"></i>
+                    <input type="text" id="topic-input" placeholder="例如：金钱是万恶之源" required>
+                </div>
+                <button type="submit" id="start-button">
+                    <i class="fa-solid fa-play"></i>
+                    <span>开始辩论</span>
+                </button>
+            </form>
+    
+            <div id="debate-arena" class="hidden">
+                <div class="topic-display-container">
+                    <h3><i class="fa-solid fa-scroll"></i> 本场辩题</h3>
+                    <p id="topic-display"></p>
+                </div>
+                <div id="dialogue-container">
+                    <!-- 辩论内容将动态插入这里 -->
+                </div>
+                <div id="loading-indicator" class="hidden">
+                    <div class="spinner"></div>
+                    <span id="loading-text"></span>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>AI Debate by 小组</p>
+        </footer>
+    </div>
+
+    <script>
+        // JavaScript代码与之前版本完全相同，无需修改，这里省略以保持简洁。
+        // 请直接使用您上一个文件中的JavaScript代码块。
+        // --- 从这里开始 ---
+        const form = document.getElementById('debate-form');
+        const topicInput = document.getElementById('topic-input');
+        const startButton = document.getElementById('start-button');
+        const debateArena = document.getElementById('debate-arena');
+        const topicDisplay = document.getElementById('topic-display');
+        const dialogueContainer = document.getElementById('dialogue-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const loadingText = document.getElementById('loading-text');
+
+        let abortController = null; // 用于中止fetch请求
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const topic = topicInput.value.trim();
+            if (!topic) return;
+
+            // 如果已有辩论在进行，则中止它
+            if (abortController) {
+                abortController.abort();
+            }
+            abortController = new AbortController();
+
+            // UI重置和准备
+            dialogueContainer.innerHTML = '';
+            topicDisplay.textContent = topic;
+            debateArena.classList.remove('hidden');
+            loadingIndicator.classList.remove('hidden');
+            loadingText.textContent = '正在连接服务器...';
+            startButton.disabled = true;
+            startButton.querySelector('span').textContent = '辩论进行中...';
+            startButton.querySelector('i').className = 'fa-solid fa-hourglass-half';
+
+            startFetchStream(topic, abortController.signal);
+        });
+
+        async function startFetchStream(topic, signal) {
+            try {
+                const response = await fetch('/start-debate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `topic=${encodeURIComponent(topic)}`,
+                    signal: signal // 传递中止信号
+                });
+
+                if (!response.ok) {
+                    throw new Error(`服务器错误: ${response.statusText}`);
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        handleDebateEnd('辩论已正常结束');
+                        break;
+                    }
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n\n');
+                    
+                    lines.forEach(line => {
+                        if (line.startsWith('data:')) {
+                            const data = line.substring(5).trim();
+                            if(data) {
+                                try {
+                                    const speech = JSON.parse(data);
+                                    addSpeechToDialogue(speech);
+                                } catch(e) {
+                                    console.error('JSON解析错误:', e, '原始数据:', data);
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.log('辩论已被用户中止。');
+                } else {
+                    console.error('Fetch流式读取时发生错误:', error);
+                    handleDebateEnd(`连接中断: ${error.message}`, true);
+                }
+            }
+        }
+
+        function handleDebateEnd(message, isError = false) {
+            loadingText.textContent = message;
+            if (isError) {
+                loadingIndicator.classList.add('error');
+            }
+            startButton.disabled = false;
+            startButton.querySelector('span').textContent = '开始新的辩论';
+            startButton.querySelector('i').className = 'fa-solid fa-play';
+            setTimeout(() => {
+                loadingIndicator.classList.add('hidden');
+                loadingIndicator.classList.remove('error');
+            }, 5000);
+            abortController = null;
+        }
+
+        function addSpeechToDialogue(speech) {
+            if (loadingIndicator.offsetParent !== null) { // 检查元素是否可见
+               loadingText.textContent = '正在接收辩论内容...';
+               setTimeout(() => loadingIndicator.classList.add('hidden'), 500);
+            }
+            
+            const speechElement = document.createElement('div');
+            speechElement.classList.add('speech-bubble');
+
+            const speaker = speech.speaker.toLowerCase();
+            let iconHtml = '';
+
+            if (speaker.includes('系统')) {
+                speechElement.classList.add('system');
+                iconHtml = `<i class="fa-solid fa-gear"></i>`;
+            } else if (speaker.includes('正方')) {
+                speechElement.classList.add('pro');
+                iconHtml = `<i class="fa-solid fa-gavel"></i>`;
+            } else if (speaker.includes('反方')) {
+                speechElement.classList.add('con');
+                iconHtml = `<i class="fa-solid fa-shield-halved"></i>`;
+            }
+
+            speechElement.innerHTML = `
+                <div class="speaker">${iconHtml} ${speech.speaker}</div>
+                <div class="content">${speech.content.replace(/\n/g, '<br>')}</div>
+            `;
+
+            dialogueContainer.appendChild(speechElement);
+            // 使用平滑滚动效果
+            speechElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+        // --- 到这里结束 ---
+    </script>
+</body>
+</html>

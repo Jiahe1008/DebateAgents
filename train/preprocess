@@ -1,0 +1,77 @@
+import json
+import re
+
+INPUT_FILE = "./dataset/training_data.jsonl"      
+OUTPUT_FILE = "./dataset/training_data_fixed.jsonl" 
+
+
+def fix_dataset():
+    with open(INPUT_FILE, 'r', encoding='utf-8') as f_in, \
+         open(OUTPUT_FILE, 'w', encoding='utf-8') as f_out:
+        
+        # 用于缓存当前场次的辩论历史
+        # 结构：字符串，包含 "【角色】：发言内容\n"
+        debate_buffer = ""
+        
+        # 用于记录当前辩题（可选，用于更严谨的校验）
+        current_topic = ""
+
+        print("正在处理数据...")
+        count = 0
+        
+        for line in f_in:
+            if not line.strip():
+                continue
+                
+            row = json.loads(line)
+            instruction = row.get("instruction", "")
+            output_content = row.get("output", "")
+            
+            # 1. 识别角色
+            role = ""
+            if "正方" in instruction:
+                role = "正方"
+            elif "反方" in instruction:
+                role = "反方"
+            elif "裁判" in instruction or "点评" in instruction or "评委" in instruction:
+                role = "裁判"
+            
+            # 2. 核心逻辑：如果是裁判，填补 input
+            if role == "裁判":
+                # 将之前积累的所有辩论历史，填入裁判的 input
+                # 并在开头加上 "【辩论全记录】\n" 这样的提示
+                full_context = f"以下是本场辩论的完整记录：\n\n{debate_buffer}"
+                row['input'] = full_context
+                
+                # 写入文件
+                f_out.write(json.dumps(row, ensure_ascii=False) + "\n")
+            
+                debate_buffer = ""
+                current_topic = ""
+                
+            else:
+                # 3. 如果是辩手（正方/反方）
+                # 首先，如果是开篇立论（input为空），我们最好尝试提取辩题（可选优化）
+                if row.get('input', "") == "" and current_topic == "":
+                    # 尝试从 instruction 提取辩题，例如 "请就“人性本善”进行立论"
+                    match = re.search(r'请就“(.*?)”', instruction)
+                    if match:
+                        current_topic = match.group(1)
+                        debate_buffer += f"【辩题】：{current_topic}\n\n"
+
+                # 写入当前这行数据（辩手的数据通常是好的，直接写）
+                f_out.write(json.dumps(row, ensure_ascii=False) + "\n")
+                
+                # 4. *** 关键 ***：将这位辩手的发言加入缓存，供未来的裁判读取
+                # 格式化一下，方便裁判阅读
+                debate_buffer += f"【{role}】：{output_content}\n"
+            
+            count += 1
+            if count % 1000 == 0:
+                print(f"已处理 {count} 行...")
+
+    print(f"处理完成！新文件已保存为: {OUTPUT_FILE}")
+    print("请使用新文件进行训练。")
+
+if __name__ == "__main__":
+    fix_dataset()
