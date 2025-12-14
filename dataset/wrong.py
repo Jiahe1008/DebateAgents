@@ -12,8 +12,7 @@ os.environ['https_proxy'] = "http://127.0.0.1:7897"
 # 0. 配置区域
 # ==========================================
 # 建议使用环境变量，或者直接填入 (注意安全)
-# os.environ["GOOGLE_API_KEY"] = "AIzaSyDoXp7XJ3MBFc0M3wepFyDMwSgDNhlwpSg"
-os.environ["GOOGLE_API_KEY"] = "AIzaSyB31QHd3RqQ_bgBxPCHkReCTzjEEhVIIjY"
+os.environ["GOOGLE_API_KEY"] = ""
 API_KEY = os.getenv("GOOGLE_API_KEY")
 
 # 初始化 Client
