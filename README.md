@@ -1,5 +1,39 @@
-# 大模型高质量数据生成文档说明
-## 一、大模型数据采集全流程
+
+
+
+# DebateAgent
+
+## datasets
+数据集构建位于`datasets`目录下。
+
+|文件名|说明|
+|---|---|
+|`training_data_fixed.jsonl`|qwen3-max生成的辩论数据|
+|`debate_dataset_v2.jsonl`|gemini-2.5-pro生成的辩论数据|
+|`logic_critique_dataset.jsonl`|gemini-2.5flash生成的逻辑诊断数据|
+|`unified_training_data.jsonl`|最终合并训练数据|
+|`topic.py`|辩题生成程序|
+|`topic.jsonl`|辩题汇总|
+|`wrong.py`|用于生成逻辑判断数据|
+
+
+## training
+训练代码位于`train`目录下。
+
+`train.py`主训练函数。
+
+`merge.py`将lora微调的部分与主权重融合。
+## inference
+内含多个版本，主要区别在于轮数和prompt，用于验证输入时的prompt对辩论内容质量的影响。
+## eval
+评估代码，掉用google-api使用gemini进行模型评估脚本。请手动设置api-key。
+
+内含实例的微调和基线在*钱是万恶之源*等五个辩题上进行辩论的评分log。
+## front
+该目录下是前端模块。
+
+## 大模型高质量数据生成文档说明
+### 一、大模型数据采集全流程
 1. 概览：使用大模型qwen3-max；生成辩题100条；python版本3.10.11；原始数据为 seed_debates.jsonl 文件，处理后数据为 training_data.jsonl 文件。前者比后者实际信息更多，但只提取了关键部分，如果想获取更详细的输入语料可更改lm_generation/convert_seed_to_training.py 文件并重新运行。
 
 2. 使用流程：【全部在根目录下运行】
@@ -29,7 +63,7 @@ python lm_generation/convert_seed_to_training.py
 python lm_generation/evaluate_debate_data.py --file data/training_data.jsonl
 ```
 
-## 二、数据质量评估项详细
+### 二、数据质量评估项详细
 - 总样本数
 统计输入文件中共有多少条辩论数据样本，是所有评估的基础数量指标。
 - 角色分布
@@ -64,19 +98,3 @@ python lm_generation/evaluate_debate_data.py --file data/training_data.jsonl
 此外，系统已自动生成包含 30 条样本的人工审核文件（review/human_review_sample.jsonl），建议结合人工抽查，重点评估论点逻辑性、反驳针对性及裁判总结的公正性与深度。
 
 综上所述，该数据集结构严谨、内容完整、格式统一，虽辩题数量属中等规模，但质量上乘，非常适合作为指令微调（SFT）的基础数据，用于训练具备基本辩论能力的语言模型。未来可考虑在保持高质量的前提下，进一步扩充辩题数量以提升模型泛化能力。
-
-
-
-## 三、当前文件结构
-
-- data 大模型即时生成数据
-- 输出汇总 存放大模型高质量数据的汇总备份
-- prompts 提示词
-- lm_generation 大模型数据生成逻辑
-- review 人工审核大模型样本
-- config.py api调用配置文件
-- training 为小模型训练预留，可改
-- agents 为构建小模型智能体预留，引入smolagents框架，可改
-- debate_system.py 为小模型训练流程预留，可改
-- main.py 为启动小模型预留，可改
-- tools.py 为小模型调用工具预留，可改

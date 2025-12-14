@@ -13,20 +13,16 @@ import wandb
 import os
 from datetime import datetime
 os.environ["CUDA_VISIBLE_DEVICES"] = "4"
+
 # ================= 配置区域 =================
-# 模型路径 (假设使用 Qwen2.5-1.5B，你可以换成 Qwen2.5-1.5B-Instruct)
 MODEL_ID = "/data/gzb/modelzoo/Qwen2.5-1.5B-Instruct" 
-# 你的数据集路径
 DATA_PATH = "/data/gzb/code/DebateAgents/dataset/training_data_fixed.jsonl"
-# 输出路径
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 OUTPUT_DIR = f"/data/gzb/code/DebateAgents/output/run_123"
 
-# 3. 动态构建最终模型保存路径
-# 结果会变成: .../output/run_20231122_143000/ckpt_merged
 FINAL_SAVE_DIR = os.path.join(OUTPUT_DIR, "ckpt_merged")
 
-# WandB 项目名称 (Run 的名字也可以加上时间)
+
 WANDB_PROJECT = "debate-qwen-finetune"
 WANDB_RUN_NAME = f"qwen-1.5b-debate-123"
 
@@ -35,15 +31,12 @@ LEARNING_RATE = 1e-5
 BATCH_SIZE = 4          # 根据显存调整，1.5B模型显存占用很小，可以适当调大
 GRADIENT_ACCUMULATION = 8
 NUM_EPOCHS = 3
-MAX_SEQ_LENGTH = 10000   # 辩论上下文通常较长，建议设大一点
+MAX_SEQ_LENGTH = 10000  
 LORA_RANK = 16
 LORA_ALPHA = 32
 LORA_DROPOUT = 0.05
-# ================= 1. 初始化 WandB =================
-# 确保你已经运行了 `wandb login` 或者设置了 WANDB_API_KEY 环境变量
 wandb.init(project=WANDB_PROJECT, name=WANDB_RUN_NAME)
 
-# ================= 2. 数据处理函数 =================
 def formatting_prompts_func(examples):
     """
     将数据集格式化为模型输入的 Prompt。
@@ -52,9 +45,6 @@ def formatting_prompts_func(examples):
     output_texts = []
     
     for instruction, input_text, output_text in zip(examples['instruction'], examples['input'], examples['output']):
-        # 构建 Prompt 结构
-        # 使用 Alpaca 风格或更清晰的辩论风格分隔符
-        
         prompt = f"### Instruction:\n{instruction}\n\n"
         
         # 只有当 input 不为空时，才添加 Input 部分
@@ -62,9 +52,6 @@ def formatting_prompts_func(examples):
             prompt += f"### Input:\n{input_text}\n\n"
         
         prompt += f"### Response:\n{output_text}"
-        
-        # Qwen 的 EOS token 会由 Trainer 自动处理，但显式添加是个好习惯，
-        # 这里 SFTTrainer 会自动把 text 字段作为训练目标
         output_texts.append(prompt)
         
     return output_texts
@@ -84,28 +71,25 @@ bnb_config = BitsAndBytesConfig(
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token # Qwen通常没有pad_token，设为eos
-tokenizer.padding_side = "right" # 训练通常使用 right padding
-
+tokenizer.padding_side = "right" 
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_ID,
     device_map="auto",
-    torch_dtype=torch.bfloat16, # 推荐在 Ampere 架构显卡(3090/4090/A100)上使用
+    torch_dtype=torch.bfloat16, 
     trust_remote_code=True,
-    # quantization_config=bnb_config # 如果需要量化请取消注释
 )
 
-# ================= 4. 配置 LoRA =================
+
 peft_config = LoraConfig(
     lora_alpha=LORA_ALPHA,
     lora_dropout=LORA_DROPOUT,
     r=LORA_RANK,
     bias="none",
     task_type="CAUSAL_LM",
-    # Qwen 的核心模块，建议对所有线性层进行微调以获得最好效果
     target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
 )
 
-# ================= 5. 设置训练参数 =================
+
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
     per_device_train_batch_size=BATCH_SIZE,

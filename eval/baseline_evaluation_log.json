@@ -1,0 +1,47 @@
+[
+    {
+        "filename": "E:/project/DebateAgents/output/baseline\\debate_record_保护文化多样性比追求文化认同更重要_20251124_035323.md",
+        "debate_quality_score": 3,
+        "logical_thinking_score": 1,
+        "off_topic_score": 1,
+        "overall_evaluation_score": 1,
+        "summary": "这场辩论从一开始就因反方立场模糊而缺乏有效对抗的基础。在自由辩论阶段，双方未能进行有质量的逻辑交锋，论点流于泛泛。最严重的问题发生在总结陈词阶段，双方模型均出现严重的指令混淆和幻觉，完全偏离辩题，导致辩论彻底失败。",
+        "timestamp": "2025-11-24T04:03:33.416124"
+    },
+    {
+        "filename": "E:/project/DebateAgents/output/baseline\\debate_record_养老金制度改革应该优先考虑代际公平_20251124_035706.md",
+        "debate_quality_score": 3,
+        "logical_thinking_score": 1,
+        "off_topic_score": 2,
+        "overall_evaluation_score": 2,
+        "summary": "这场辩论在立论阶段表现尚可，但随后迅速偏离了辩论的本质。双方模型未能有效互动，缺乏逻辑交锋，且出现了严重的跑题和角色幻觉。辩论质量在后续轮次急剧下降，未能围绕核心辩题进行深入探讨，最终演变为一系列通用且不连贯的表述。整体而言，未能展现出AI模型应有的辩论分析和逻辑推理能力。",
+        "timestamp": "2025-11-24T04:03:54.400103"
+    },
+    {
+        "filename": "E:/project/DebateAgents/output/baseline\\debate_record_科技发展让人类更加孤独_20251124_040102.md",
+        "debate_quality_score": 4,
+        "logical_thinking_score": 2,
+        "off_topic_score": 1,
+        "overall_evaluation_score": 2,
+        "summary": "这场辩论赛的表现令人失望。虽然立论阶段双方模型尚能围绕辩题展开论述，语言也基本流畅，但论据普遍缺乏深度和具体支撑。更为严重的是，从自由辩论阶段开始，辩论就彻底失焦，双方模型陷入了严重的AI角色混淆和幻觉，将辩论环节变成了与用户的互动模拟，充斥着大量与辩题无关的元评论和客套话。这导致了逻辑交锋的完全缺失，辩论质量和在题性都跌入谷底。整体而言，这场辩论未能体现出AI模型在严肃辩论场景下的应有表现，表现为严重的指令理解偏差和角色扮演失败。",
+        "timestamp": "2025-11-24T04:04:17.023580"
+    },
+    {
+        "filename": "E:/project/DebateAgents/output/baseline\\debate_record_程序正义比实体正义更重要_20251124_040248.md",
+        "debate_quality_score": 5,
+        "logical_thinking_score": 2,
+        "off_topic_score": 6,
+        "overall_evaluation_score": 4,
+        "summary": "本次辩论开篇立论尚可，双方模型均能清晰阐述各自立场。然而，在随后的自由辩论和总结陈词环节，辩论质量急剧下降。双方未能进行有效的逻辑交锋和反驳，互动模式从辩论转变为合作性讨论，甚至出现敷衍了事的回应。尽管主题保持一致，但缺乏对抗性、深度论证和角色扮演的一致性，使得整场辩论的质量和效果大打折扣。",
+        "timestamp": "2025-11-24T04:04:34.555850"
+    },
+    {
+        "filename": "E:/project/DebateAgents/output/baseline\\debate_record_钱是万恶之源_20251124_035151.md",
+        "debate_quality_score": 3,
+        "logical_thinking_score": 1,
+        "off_topic_score": 0,
+        "overall_evaluation_score": 1,
+        "summary": "本场辩论开局良好，双方立论清晰有力，语言流畅。然而，辩论的第二阶段（正方第一轮）正方模型即出现严重的角色混淆，开始论证反方观点。此后，由于用户多次插入与辩题无关的指令，两个AI模型未能保持辩论的连贯性和目的性，完全偏离了辩题，转而执行新的指令。最终的总结陈词也与辩题无关，尤其是正方总结陈词出现了大量无意义的关键词堆砌，显示出严重的幻觉。整场辩论除了开篇立论，其余部分均未能有效进行，是一场失败的辩论。",
+        "timestamp": "2025-11-24T04:04:52.521691"
+    }
+]
